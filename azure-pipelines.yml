@@ -8,11 +8,23 @@ trigger:
 
 pool: suri
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: 'off'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+
+- task: DownloadBuildArtifacts@1
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'arti'
+    downloadPath: '$(System.ArtifactsDirectory)'
